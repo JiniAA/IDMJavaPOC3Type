@@ -1,0 +1,54 @@
+CREATE DATABASE Employee;
+USE Employee;
+
+
+CREATE TABLE emp (
+    empid varchar(15),
+    LastName varchar(20),
+    FirstName varchar(20)
+);
+
+insert into emp values('10','Ajith','jini');
+insert into emp values('11','dain','johny');
+insert into emp values('12','kumar','ajith');
+
+CREATE TABLE Address (
+    empid varchar(15),
+    city varchar(20),
+    house varchar(20)
+);
+
+insert into Address values('10','banglore','rosevilla');
+insert into Address values('11','kochi','johnyHome');
+insert into Address values('12','delhi','ajith');
+
+CREATE TABLE department (
+    empid varchar(15),
+    dept varchar(20),
+    manager varchar(20)
+);
+
+
+insert into department values('10','dev','christapher');
+insert into department values('11','netops','lal');
+insert into department values('12','sap','alishba');
+
+CREATE TABLE project (
+    empid varchar(15),
+    project varchar(20),
+    hours varchar(20)
+);
+
+insert into project values('10','deva','20');
+insert into project values('11','murphy','20');
+insert into project values('12','atos','20');
+
+CREATE TABLE jobdetails (
+    empid varchar(15),
+    jobtitle varchar(20),
+    dateofJoining varchar(20)
+);
+
+insert into jobdetails values('10','software engineer','jini');
+insert into jobdetails values('11','consultant','johny');
+insert into jobdetails values('12','consultant','ajith');

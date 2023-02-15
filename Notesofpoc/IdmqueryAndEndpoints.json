@@ -1,0 +1,9 @@
+{
+    "MC_DISPATCHER": {
+        "Query": "select * from MC_DISPATCHER"
+    },
+    "MC_JOBS" : {
+              "Query" : "select * from MC_JOBS"
+    } 
+
+}

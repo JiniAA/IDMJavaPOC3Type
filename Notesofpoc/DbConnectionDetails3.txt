@@ -1,0 +1,9 @@
+{
+ "host":"localhost",
+ "port":"3306",
+ "database":"mysql",
+ "schema":"employee3",
+ "userid":"root",
+ "password":"Jiniaa@1996",
+ "Driver":"com.mysql.jdbc.Driver"    
+}

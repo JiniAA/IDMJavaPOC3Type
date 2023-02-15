@@ -1,0 +1,71 @@
+//Class driver_class =
+                Class.forName(driver);
+//        Driver driver1 =(Driver) driver_class.newInstance();
+//        DriverManager.registerDriver(driver1);
+
+
+Download Notes of CF CLI Steps, Links and Commands
+Download Notes of CF CLI Steps, Links, and Commands
+
+1. Create a new Account in SAPÂ® BTP
+https://account.hana.ondemand.com/
+ 
+2. Install CF CLI
+https://github.com/cloudfoundry/cli/wiki/V6-CLI-Installation-Guide
+ 
+3. Important and Basic CF CLI Commands:
+https://cli.cloudfoundry.org/en-US/v6/
+	
+	1. $ cf version
+	Version of CF CLI
+	
+	
+	2. $ cf login
+	Login to Cloud Foundry via CLI
+ 
+	Flags:
+		-a API_URL Example: https://api.cf.eu10.hana.ondemand.com
+		-u USERNAME Example: Email ID
+		-o ORG
+		-s SPACE
+ 
+	3. $ cf marketplace
+	Getting services from marketplace
+ 
+	
+	4. $ cf buildpacks
+	Check What are all the App Buildpacks  Can be used
+ 
+ 
+	5. $ cf apps
+	List all apps in the target space
+ 
+ 
+	6. $ cf start|stop|restart <app-name>
+	Start or Stop or Restart an App
+ 
+ 
+	7. $  cf logs <app-name> --recent
+	Check Logs of the App
+ 
+ 
+	8.$ sudo cf app <App Name>
+	Check health and status for the app
+ 
+ 
+	9.$ sudo cf scale <App Name> -i INSTANCES
+	Number of Instance of the App with i in integer
+ 
+ 
+ 
+	10.$ sudo cf scale <App Name> -m 
+	Memory limit example 256M, 1024G, 1G etc.
+ 
+ 
+	11.$ sudo cf scale <App Name> -k
+	Disk Limit example 256M, 1024G, 1G etc.
+ 
+ 
+	12.$ sudo cf delete <App Name>
+	Delete the App and -f for forced 
+ 

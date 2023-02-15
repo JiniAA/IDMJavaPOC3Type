@@ -1,0 +1,18 @@
+{
+    "emp": {
+        "Query": "select * from emp"
+    },
+    "address" : {
+              "Query" : "select * from address"
+    },
+    "department" : {
+              "Query" : "select * from department"
+    },
+    "project" : {
+              "Query" : "select * from project"
+    },
+    "jobdetails" : {
+              "Query" : "select * from jobdetails"
+    }
+
+}
