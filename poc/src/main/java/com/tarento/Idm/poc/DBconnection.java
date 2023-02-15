@@ -33,17 +33,21 @@ public class DBconnection {
             = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\EndPointsAndQueries.json";
     final static String IDMqueryfile
             = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\IdmqueryAndEndpoints.json";
+
     public Connection readConnectionDetails(String file) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             connectEstablish connectEstablish = objectMapper.readValue(new File(file), DBconnection.connectEstablish.class);
-            String  url = "jdbc:" + connectEstablish.database + "://" + connectEstablish.host + ":" + connectEstablish.port + "/" + connectEstablish.schema;
-          //String url="jdbc:" +connectEstablish.database +"://"+ connectEstablish.host+"\\"
-           //       +connectEstablish.instancename+";databaseName="+connectEstablish.schema;
+            //String  url = "jdbc:" + connectEstablish.database + "://" + connectEstablish.host + ":" + connectEstablish.port + "/" + connectEstablish.schema;
+          //String url="jdbc:" +connectEstablish.database +"://"+ connectEstablish.host+"\\\\"
+                 // +connectEstablish.instancename+";databaseName="+connectEstablish.schema;
+            String url="jdbc:" +connectEstablish.database +"://"+ connectEstablish.host+":"+connectEstablish.port+";databaseName="+connectEstablish.schema+";encrypt=true;trustServerCertificate=true";
+            System.out.println(url);
           //jdbc:sqlserver://164.68.114.67\\sqlexpress;databaseName=MXMC_DB
+            //URL: jdbc:sqlserver://HOST:PORT;databaseName=DB
 
             Connection connection = connectDb(url, connectEstablish.userid, connectEstablish.password, connectEstablish.Driver);
-            System.out.println(url);
+
             return connection;
     }
     catch (IOException | ClassNotFoundException | SQLException e) {
@@ -62,12 +66,13 @@ public class DBconnection {
 
     }
 
-    public record connectEstablish(String host,String port,String database,String schema,String userid,String password,String Driver){
+    public record connectEstablish(String host,String port,String database,String schema,String userid,String password,String Driver,String instancename){
 
     }
 
     public Map<String, List<Map<String, Object>>> queryStatement(String sql, String endPoint) throws IOException, SQLException {
-        Connection connection =readConnectionDetails(filePath1);
+        //Connection connection =readConnectionDetails(filePath1);
+        Connection connection =readConnectionDetails(idmFilePath3);
         Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             /* CallableStatement callableStatement =connection.prepareCall(sql);
             ResultSet resultSet=callableStatement.getResultSet();*/
@@ -110,7 +115,7 @@ public class DBconnection {
         Properties properties = new Properties();
         properties.put("user", user);
         properties.put("password", password);
-        properties.put("connectTimeout",10000);
+        properties.put("connectTimeout",20000);
 
 
         connection= DriverManager.getConnection(url,properties);
@@ -120,7 +125,8 @@ public class DBconnection {
     }
 
     public Map<String, List<Map<String, Object>>> readQueryEndPoint(String endPoint) throws IOException, JSONException, SQLException {
-        InputStream inputStream=new FileInputStream(new File(queryfile));
+       // InputStream inputStream=new FileInputStream(new File(queryfile));
+        InputStream inputStream=new FileInputStream(new File( IDMqueryfile));
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Map<String,String>> jsonMap =  mapper.readValue(inputStream,Map.class);
         Set<String> keyss = jsonMap.keySet();
