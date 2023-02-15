@@ -1,5 +1,0 @@
-server:
-  tomcat:
-    relaxed-query-chars: ['{','}']
-
-    relaxed-query-chars=|:
