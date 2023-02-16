@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.*;
 import java.util.List;
@@ -93,9 +95,7 @@ public class DBconnection {
 
     public record connectEstablish(String host, String port, String database, String schema, String userid,
                                    String password, String Driver, String instancename) {
-
     }
-
     public Map<String, List<Map<String, Object>>> queryStatement(String sql, String endPoint) throws IOException, SQLException {
         try {
             //Connection connection =readConnectionDetails(filePath1);
@@ -103,7 +103,6 @@ public class DBconnection {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             /* CallableStatement callableStatement =connection.prepareCall(sql);
             ResultSet resultSet=callableStatement.getResultSet();*/
-
             ResultSet resultSet = statement.executeQuery(sql);
 
             List<Map<String, Object>> rows = new ArrayList<>();
@@ -136,17 +135,13 @@ public class DBconnection {
     public Connection connectDb(String url, String user, String password, String driver) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
         Connection connection = null;
         Class.forName(driver);
-
         Properties properties = new Properties();
         properties.put("user", user);
         properties.put("password", password);
         properties.put("connectTimeout", 20000);
-
-
         connection = DriverManager.getConnection(url, properties);
 
         return connection;
-
     }
 
     public List<Object> readQueryEndPoint(String endPoint) throws IOException, SQLException, ParseException {
@@ -169,25 +164,22 @@ public class DBconnection {
                     /*mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
                     mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);*/
                     // String jsonMap_template =  mapper.readValue(templateStream,String.class);
-                    FileReader fileReader = new FileReader(new File(Template_path));
-                    String jsonMap_template = mapper.readValue(fileReader,Object.class).toString();
-                    //jsonMap_template=jsonMap_template.replace('=', ':');
+                    //FileReader fileReader = new FileReader(new File(Template_path));
+                    //String jsonMap_template = mapper.readValue(fileReader,Object.class).toString();
+                    String jsonMap_template = new String(Files.readAllBytes(Paths.get(Template_path)));
                     System.out.println("jsontem"+jsonMap_template);
                     Map<String, List<Map<String, Object>>> object = queryStatement(query, endPoint);
                     Collection<List<Map<String, Object>>> objectList = object.values();
                     System.out.println(objectList);
-
                     for (List<Map<String, Object>> datas : objectList) {
                         System.out.println(datas);
                         for(Map<String, Object> data : datas) {
-
-                            System.out.println(data);
-                            System.out.println(jsonMap_template);
-                            String res =  templateParser.parse("template_dispatcher_001", jsonMap_template.toString(), data);
-//                            JSONParser parser = new JSONParser(res);
-//                            JSONObject json = (JSONObject) parser.parse();
-//                            System.out.println(json);
-                            response.add(res);
+                            String res =  templateParser.parse("template_dispatcher_001", jsonMap_template, data);
+                            JSONParser parser = new JSONParser(res);
+                            Object json = parser.parse();
+                            System.out.println(json);
+                            System.out.println(res);
+                            response.add(json);
                         }
                     }
                 }
@@ -248,8 +240,6 @@ public class DBconnection {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
     public static List<List<Object>> buildTableData(ResultSet rs) throws SQLException {
@@ -282,7 +272,6 @@ public class DBconnection {
                 insertValues += "?";
             }
 
-
             for (int i = 1; i < columnNames.size(); i++) {
                 insertColumns += ", " + columnNames.get(i);
                 insertValues += ", " + "?";
@@ -306,7 +295,5 @@ public class DBconnection {
             throw new RuntimeException(e);
         }
     }
-
-
 }
 
