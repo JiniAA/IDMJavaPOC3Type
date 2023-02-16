@@ -1,13 +1,20 @@
 package com.tarento.Idm.poc;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.tarento.Idm.poc.service.TemplateParser;
+import org.apache.logging.log4j.util.Chars;
+import org.apache.tomcat.util.digester.DocumentProperties;
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.*;
 import java.util.List;
@@ -142,13 +149,14 @@ public class DBconnection {
 
     }
 
-    public Map<String, List<Map<String, Object>>> readQueryEndPoint(String endPoint) throws IOException, SQLException {
+    public List<Object> readQueryEndPoint(String endPoint) throws IOException, SQLException, ParseException {
         //InputStream inputStream=new FileInputStream(new File(queryfile));
         InputStream inputStream = new FileInputStream(new File(IDMquery_TemplateFile));
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Map<String, String>> jsonMap = mapper.readValue(inputStream, Map.class);
         System.out.println(jsonMap);
         Set<String> keyss = jsonMap.keySet();
+        List<Object> response = new ArrayList<>();
         for (String key : keyss) {
             if (key.equals(endPoint)) {
                 Map<String, String> value = jsonMap.get(key);
@@ -156,18 +164,34 @@ public class DBconnection {
                 String Template_flag = value.get("templateFile");
                 String Template_path = value.get("jsonResponseTemplate_filePath");
                 if (Template_flag.equals("Y")) {
-                    InputStream templateStream = new FileInputStream(new File(Template_path));
+                   // InputStream templateStream = new FileInputStream(new File(Template_path));
                     ObjectMapper TemplateMapper = new ObjectMapper();
-                    mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-                    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                    /*mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+                    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);*/
                     // String jsonMap_template =  mapper.readValue(templateStream,String.class);
-                    String jsonMap_template = mapper.writeValueAsString(templateStream);
-                    System.out.println(jsonMap_template);
-                    Object object = queryStatement(query, endPoint);
-                    String res = templateParser.parse("template", jsonMap_template, object);
-                    System.out.println(res);
+                    FileReader fileReader = new FileReader(new File(Template_path));
+                    String jsonMap_template = mapper.readValue(fileReader,Object.class).toString();
+                    //jsonMap_template=jsonMap_template.replace('=', ':');
+                    System.out.println("jsontem"+jsonMap_template);
+                    Map<String, List<Map<String, Object>>> object = queryStatement(query, endPoint);
+                    Collection<List<Map<String, Object>>> objectList = object.values();
+                    System.out.println(objectList);
+
+                    for (List<Map<String, Object>> datas : objectList) {
+                        System.out.println(datas);
+                        for(Map<String, Object> data : datas) {
+
+                            System.out.println(data);
+                            System.out.println(jsonMap_template);
+                            String res =  templateParser.parse("template_dispatcher_001", jsonMap_template.toString(), data);
+//                            JSONParser parser = new JSONParser(res);
+//                            JSONObject json = (JSONObject) parser.parse();
+//                            System.out.println(json);
+                            response.add(res);
+                        }
+                    }
                 }
-                return queryStatement(query, endPoint);
+                return response;
             }
         }
         return null;

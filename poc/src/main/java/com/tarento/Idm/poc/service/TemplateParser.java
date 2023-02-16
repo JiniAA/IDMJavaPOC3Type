@@ -10,13 +10,14 @@ import java.io.IOException;
 import java.io.StringWriter;
 @Service
 public class TemplateParser {
-
     Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
-    StringTemplateLoader stringLoader = new StringTemplateLoader();
+
 
     public String parse(String templateName, String fillerObject, Object object) {
+        //tempname, tempstructure,each table rows
+        StringTemplateLoader stringLoader = new StringTemplateLoader();
         try {
-            stringLoader.putTemplate( templateName, fillerObject);
+            stringLoader.putTemplate( templateName,fillerObject);
             cfg.setTemplateLoader(stringLoader);
             Template template = cfg.getTemplate(templateName);
             StringWriter stringWriter = new StringWriter();
