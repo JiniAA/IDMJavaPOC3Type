@@ -167,18 +167,16 @@ public class DBconnection {
                     //FileReader fileReader = new FileReader(new File(Template_path));
                     //String jsonMap_template = mapper.readValue(fileReader,Object.class).toString();
                     String jsonMap_template = new String(Files.readAllBytes(Paths.get(Template_path)));
-                    System.out.println("jsontem"+jsonMap_template);
                     Map<String, List<Map<String, Object>>> object = queryStatement(query, endPoint);
                     Collection<List<Map<String, Object>>> objectList = object.values();
-                    System.out.println(objectList);
                     for (List<Map<String, Object>> datas : objectList) {
-                        System.out.println(datas);
+                        System.out.println("datas"+datas);
                         for(Map<String, Object> data : datas) {
                             String res =  templateParser.parse("template_dispatcher_001", jsonMap_template, data);
                             JSONParser parser = new JSONParser(res);
                             Object json = parser.parse();
-                            System.out.println(json);
-                            System.out.println(res);
+                           // System.out.println(json);
+                           // System.out.println(res);
                             response.add(json);
                         }
                     }
