@@ -1,5 +1,5 @@
 
-package com.tarento.Idm.poc.service;
+package com.tarento.Idm.poc.util;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.core.ParseException;
