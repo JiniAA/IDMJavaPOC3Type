@@ -2,38 +2,11 @@
  "host":"164.68.114.67",
  "port":"1433",
  "database":"sqlserver",
- "instancename":"SQLEXPRESS",
+ "instancename":"sqlexpress",
  "schema":"MXMC_DB",
  "userid":"MXMC_oper",
  "password":"IdM_2019",
- "Driver":"msnodesqlv8"    
+ "Driver":"com.microsoft.sqlserver.jdbc.SQLServerDriver"    
 }
 
 
-{
- "host":"localhost",
- "port":"3306",
- "database":"mysql",
- "schema":"employee",
- "userid":"root",
- "password":"Jiniaa@1996",
- "Driver":"com.mysql.jdbc.Driver"    
-}
-
-
-
-  user :'MXMC_oper',
-    password :'IdM_2019',
-    server:'164.68.114.67',
-    database:'MXMC_DB',
-    driver:'msnodesqlv8',
- port : 1433
-
-instancename :'SQLEXPRESS'
-
-jdbc:sqlserver://[serverName[\instanceName][:portNumber]][;property=value[;property=value]]
-
-jdbc:sqlserver://164.68.114.67\\sqlexpress:1433;databaseName=MXMC_DB
- "jdbc:sqlserver://${DB_IP}:1435;databaseName:1433=${DB_NAME}"
-
-jdbc:mysql://localhost:3306/employee
