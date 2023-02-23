@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
-@EnableWebSecurity
+
 public class PocApplication  {
 
 	public static void main(String[] args) throws SQLException, IOException {

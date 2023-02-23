@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/getData")
@@ -33,7 +34,7 @@ public class DataController {
 
 
    @GetMapping("/{endPoint}")
-    public List<Object> dynamicQueryExecuter(@PathVariable("endPoint") String endPoint) throws JSONException, IOException, SQLException, ParseException {
+    public Map<String, Object> dynamicQueryExecuter(@PathVariable("endPoint") String endPoint) throws JSONException, IOException, SQLException, ParseException {
         return dataGetService.readQueryEndPoint(endPoint);
     }
    // Map<String, List<Map<String, Object>>>
