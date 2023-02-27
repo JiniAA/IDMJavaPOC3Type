@@ -1,18 +1,28 @@
 {
     "emp": {
-        "Query": "select * from emp"
+        "Query": "select * from emp",
+        "templateFile":"N",
+           "jsonResponseTemplate_filePath":""
     },
     "address" : {
-              "Query" : "select * from address"
+              "Query" : "select * from address",
+              "templateFile":"N",
+           "jsonResponseTemplate_filePath":""
     },
     "department" : {
-              "Query" : "select * from department"
+              "Query" : "select * from department",
+              "templateFile":"N",
+           "jsonResponseTemplate_filePath":""
     },
     "project" : {
-              "Query" : "select * from project"
+              "Query" : "select * from project",
+              "templateFile":"N",
+           "jsonResponseTemplate_filePath":""
     },
     "jobdetails" : {
-              "Query" : "select * from jobdetails"
+              "Query" : "select * from jobdetails",
+              "templateFile":"N",
+           "jsonResponseTemplate_filePath":""
     }
 
 }

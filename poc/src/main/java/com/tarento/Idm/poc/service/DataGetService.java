@@ -34,15 +34,15 @@ public class DataGetService {
     @Autowired
     TemplateParser templateParser;
 
-    final static String idmFilePath3
-            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\idmDBConnectionDetails.txt";
-    final static String IDMquery_TemplateFile
-            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\IDMquery_Template.json";
+    final static String DatabaseConnectionFilePath
+            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPoc\\DataBaseConnectionDetails.txt";
+    final static String EndpointsAndQueriesWithTemplateFilePath
+            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPoc\\QueriesWithTemplatePath.json";
 
 
     public Map<String, List<Map<String, Object>>> queryStatement(String sql, String endPoint) {
         try {
-            Connection connection = dBconnection.readConnectionDetails(idmFilePath3);
+            Connection connection = dBconnection.readConnectionDetails(DatabaseConnectionFilePath);
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
             ResultSet resultSet = statement.executeQuery(sql);
@@ -76,7 +76,7 @@ public class DataGetService {
 
     public Map<String,Object> readQueryEndPoint(String endPoint) throws IOException, ParseException, JSONException {
 
-        InputStream inputStream = new FileInputStream(new File(IDMquery_TemplateFile));
+        InputStream inputStream = new FileInputStream(new File(EndpointsAndQueriesWithTemplateFilePath));
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Map<String, String>> jsonMap = mapper.readValue(inputStream, Map.class);
         System.out.println(jsonMap);
@@ -110,7 +110,7 @@ public class DataGetService {
                         System.out.println("datas" + datas);
                         for (Map<String, Object> data : datas) {
                             flag = flag + 1;
-                            String res = templateParser.parse("template_dispatcher_001", template_body.toString(), data);
+                            String res = templateParser.parse("template", template_body.toString(), data);
                             JSONParser parser = new JSONParser(res);
                             Object json = parser.parse();
                             response.add(json);
@@ -120,15 +120,6 @@ public class DataGetService {
                     Response.put("Total_entries",flag);
                     Response.put(ParentNode,response);
                     return Response;
-
-//                    Map<String, String> map = new HashMap<>();
-//                    map.put("ParentNode", endPoint);
-//                    map.put("Total_entries", String.valueOf(flag));
-//                    Object obj = new Object();
-//                    obj = map;
-//                    response1.add(obj);
-//                    response1.add(response);
-//                    return response1;
 
           }
                 else {

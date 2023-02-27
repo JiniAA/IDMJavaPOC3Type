@@ -1,0 +1,10 @@
+{
+	"parentNode"	: "Employee",
+	"body"		: 	{
+						"Employee_ID" 		: "${empid}",
+						"LstName"			: "${LastName}",
+                                    "FirstName"             : "${FirstName}"
+			
+					}
+					
+}

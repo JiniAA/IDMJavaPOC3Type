@@ -1,0 +1,17 @@
+{
+	"parentNode"	: "dispatchersList",
+	"body"		: 	{
+						"disp_id" 			: "${DispatcherID}",
+						"disp_name"			: "${Machine}",
+						"status"              : {
+
+							"last_checked_at"	: "${LAST_VISITED}",
+							"stop_disp"			: "${STOP_DISPATCHER}",
+							"status_info"		: "${STATUS_INFO}"	
+
+						}
+			
+						
+					}
+					
+}

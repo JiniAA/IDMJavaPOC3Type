@@ -1,0 +1,28 @@
+{
+  "emp": {
+      "Query": "select * from emp",
+      "templateFile":"Y",
+         "jsonResponseTemplate_filePath":"C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPoc\\ResponseTemplateEmp.txt"
+  },
+  "address" : {
+            "Query" : "select * from address",
+            "templateFile":"N",
+         "jsonResponseTemplate_filePath":""
+  },
+  "department" : {
+            "Query" : "select * from department",
+            "templateFile":"N",
+         "jsonResponseTemplate_filePath":""
+  },
+  "project" : {
+            "Query" : "select * from project",
+            "templateFile":"N",
+         "jsonResponseTemplate_filePath":""
+  },
+  "jobdetails" : {
+            "Query" : "select * from jobdetails",
+            "templateFile":"N",
+         "jsonResponseTemplate_filePath":""
+  }
+
+}

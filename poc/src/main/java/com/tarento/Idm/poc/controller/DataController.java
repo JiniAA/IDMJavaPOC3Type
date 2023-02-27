@@ -5,15 +5,18 @@ import com.tarento.Idm.poc.connection.DBconnection;
 import com.tarento.Idm.poc.service.DataGetService;
 import com.tarento.Idm.poc.service.DataPostService;
 import com.tarento.Idm.poc.service.DataPushService;
+import com.tarento.Idm.poc.util.BasicAuthAndApiKeyFilterAndAuthenticator;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.json.ParseException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/getData")
@@ -32,12 +35,21 @@ public class DataController {
     @Autowired
     DataGetService dataGetService;
 
+    @Autowired
+    BasicAuthAndApiKeyFilterAndAuthenticator filter;
+
 
    @GetMapping("/{endPoint}")
-    public Map<String, Object> dynamicQueryExecuter(@PathVariable("endPoint") String endPoint) throws JSONException, IOException, SQLException, ParseException {
-        return dataGetService.readQueryEndPoint(endPoint);
+    public ResponseEntity dynamicQueryExecuter(@PathVariable("endPoint") String endPoint, HttpServletRequest request) throws JSONException, IOException, SQLException, ParseException {
+             if(filter.DoFilter(request)) {
+                 return new ResponseEntity<>(dataGetService.readQueryEndPoint(endPoint), HttpStatus.ACCEPTED);
+             }
+             else {
+                 return new ResponseEntity<>("Unathorized User\n Check your credentilas again",HttpStatus.UNAUTHORIZED);
+
+             }
     }
-   // Map<String, List<Map<String, Object>>>
+
     @PostMapping("/postData/{tableName}")
     public void postDataToDB(@PathVariable("tableName") String tableName,
                              @RequestParam("columnNames")List<String> columnNames,
