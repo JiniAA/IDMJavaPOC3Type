@@ -1,0 +1,9 @@
+{
+   "MC_DISPATCHER": {
+       "Query": "select DispatcherID,Machine,LAST_VISITED,STOP_DISPATCHER,STATUS_INFO from MC_DISPATCHER"
+   },
+   "mxp_provstatus" : {
+             "Query" : "select * from mxp_provstatus"
+   }
+
+}

@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/getData")
+@RequestMapping("/api")
 public class DataController {
 
 
@@ -36,13 +36,13 @@ public class DataController {
     DataGetService dataGetService;
 
     @Autowired
-    BasicAuthAndApiKeyFilterAndAuthenticator filter;
+    BasicAuthAndApiKeyFilterAndAuthenticator Authfilter;
 
 
    @GetMapping("/{endPoint}")
     public ResponseEntity dynamicQueryExecuter(@PathVariable("endPoint") String endPoint, HttpServletRequest request) throws JSONException, IOException, SQLException, ParseException {
-             if(filter.DoFilter(request)) {
-                 return new ResponseEntity<>(dataGetService.readQueryEndPoint(endPoint), HttpStatus.ACCEPTED);
+             if(Authfilter.DoFilter(request)) {
+                 return dataGetService.readQueryEndPoint(endPoint);
              }
              else {
                  return new ResponseEntity<>("Unathorized User\n Check your credentilas again",HttpStatus.UNAUTHORIZED);
@@ -58,7 +58,7 @@ public class DataController {
        dataPostService.postDataToDB(tableName,columnNames,data);
     }
     @PostMapping("/pushData")
-    public void transferDataAtoB() throws SQLException, IOException {
-       dataPushService.dataTransferAToB();
+    public ResponseEntity<?> transferDataAtoB() throws SQLException, IOException {
+      return dataPushService.dataTransferAToB();
     }
 }

@@ -11,78 +11,69 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
-//public class ApiKeyFilter extends OncePerRequestFilter {
-public class BasicAuthAndApiKeyFilterAndAuthenticator {
 
-   // private final String apiKey = "123456";
-    public static String credFilepath="C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPoc\\BasicAuthCredentials.txt";
-    public static String ApiKey;
-    public static String KeyValue;
-    public static String AuthType;
-    public static String username;
-    public static String password;
-    @Bean
-    public void setCredentilass () throws IOException, ParseException {
-        String credentilas = new String(Files.readAllBytes(Paths.get(credFilepath)));
+public class BasicAuthAndApiKeyFilterAndAuthenticator {
+    public static String authenticationFilepath = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\BasicAuthCredentials.txt";
+
+    public Map<String, String> setCredentials() throws IOException, ParseException {
+        Map<String, String> credential = new HashMap<>();
+        String credentilas = new String(Files.readAllBytes(Paths.get(authenticationFilepath)));
         JSONParser parse = new JSONParser(credentilas);
         Map<String, String> json_credentials = (Map<String, String>) parse.parse();
-        System.out.println("json_credentials:"+json_credentials);
-        ApiKey=json_credentials.get("ApiKey");
-        KeyValue=json_credentials.get("KeyValue");
-        AuthType=json_credentials.get("Authentication_type");
-        username=json_credentials.get("username");
-        password=json_credentials.get("password");
-        System.out.println(ApiKey+KeyValue);
-        System.out.println(json_credentials);
-    }
+        credential.put("ApiKey", json_credentials.get("ApiKey"));
+        credential.put("KeyValue", json_credentials.get("KeyValue"));
+        credential.put("AuthType", json_credentials.get("AuthType"));
+        credential.put("username", json_credentials.get("username"));
+        credential.put("password", json_credentials.get("password"));
 
-    //@Override
-//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        String apiKeyHeader = request.getHeader("Key");
-//        if (apiKeyHeader == null || !apiKeyHeader.equals(KeyValue)) {
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid API key");
-//            return;
-//        }
-//        filterChain.doFilter(request, response);
-//    }
+        return credential;
+    }
 
     public Boolean DoFilter(HttpServletRequest request) {
-        String apiKeyHeader = request.getHeader(ApiKey);
-        System.out.println("apiKeyHeader"+apiKeyHeader);
-        String basicAuthHeader=request.getHeader("Authorization");
-        System.out.println("basicAuthHeader"+basicAuthHeader);
-        if ((basicAuthHeader == null ) && (apiKeyHeader == null || !apiKeyHeader.equals(KeyValue))) {
-            return false;
-        }
-        else {
-            if (basicAuthHeader!= null)
-            {//means user using basic auth
-              return BasicAuthFilter(basicAuthHeader);
+        try {
+            Map<String, String> keys = setCredentials();
+            String apiKeyHeader = request.getHeader(keys.get("ApiKey"));
+            String basicAuthHeader = request.getHeader("Authorization");
+            if ((basicAuthHeader == null) && (apiKeyHeader == null || !apiKeyHeader.equals(keys.get("KeyValue")))) {
+                return false;
+            } else {
+                if (basicAuthHeader != null) {//means user using basic auth
+                    return BasicAuthFilter(basicAuthHeader, keys);
+                } else {
+                    //user using api key
+                    return apiKeyHeader.equals(keys.get("KeyValue"));
+                }
             }
-            else {
-                //user using api key
-                return apiKeyHeader.equals(KeyValue);
-            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
     }
-    public Boolean BasicAuthFilter(String basicAuthHeader){
-        if (basicAuthHeader != null && basicAuthHeader.startsWith("Basic ")) {
-            String base64Credentials = basicAuthHeader.substring("Basic ".length());
-            String credentials = new String(Base64.getDecoder().decode(base64Credentials), Charset.forName("UTF-8"));
-            String[] parts = credentials.split(":", 2);
-            String authUsername = parts[0];
-            String authPassword = parts[1];
-            System.out.println("authUsername+authPassword:"+authUsername+authPassword);
-            if (authUsername.equals(username) && authPassword.equals(password)) {
-                return true;
-            } else {
-                return false;
+
+    public Boolean BasicAuthFilter(String basicAuthHeader, Map<String, String> userData) throws IOException, ParseException {
+        try {
+            if (basicAuthHeader != null && basicAuthHeader.startsWith("Basic ")) {
+                String base64Credentials = basicAuthHeader.substring("Basic ".length());
+                String credentials = new String(Base64.getDecoder().decode(base64Credentials), Charset.forName("UTF-8"));
+                String[] parts = credentials.split(":", 2);
+                String authUsername = parts[0];
+                String authPassword = parts[1];
+                System.out.println("authUsername+authPassword:" + authUsername + authPassword);
+                if (authUsername.equals(userData.get("username")) && authPassword.equals(userData.get("password"))) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
 

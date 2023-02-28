@@ -13,6 +13,8 @@ import org.apache.tomcat.util.json.ParseException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -35,9 +37,9 @@ public class DataGetService {
     TemplateParser templateParser;
 
     final static String DatabaseConnectionFilePath
-            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPoc\\DataBaseConnectionDetails.txt";
+            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\DataBaseConnectionDetails.txt";
     final static String EndpointsAndQueriesWithTemplateFilePath
-            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPoc\\QueriesWithTemplatePath.json";
+            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\QueriesWithTemplatePath.json";
 
 
     public Map<String, List<Map<String, Object>>> queryStatement(String sql, String endPoint) {
@@ -74,71 +76,77 @@ public class DataGetService {
         }
     }
 
-    public Map<String,Object> readQueryEndPoint(String endPoint) throws IOException, ParseException, JSONException {
+    public ResponseEntity<?> readQueryEndPoint(String endPoint){
+        try {
+            InputStream inputStream = new FileInputStream(new File(EndpointsAndQueriesWithTemplateFilePath));
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Map<String, String>> jsonMap = mapper.readValue(inputStream, Map.class);
+            System.out.println(jsonMap);
+            Set<String> keyss = jsonMap.keySet();
+            List<Object> response = new ArrayList<>();
+            Map<String, Object> Response = new HashMap<>();
+            Map<String, Object> Error = new HashMap<>();
+            Error.put("Error","Invalid End Point");
+            int rowCountflag = 0;
+            for (String key : keyss) {
+                if (key.equals(endPoint)) {
+                    Map<String, String> value = jsonMap.get(key);
+                    String query = value.get("Query");
+                    String Template_flag = value.get("templateFile");
+                    String Template_path = value.get("jsonResponseTemplate_filePath");
+                    String ParentNode;
+                    if (Template_flag.equals("Y")) {
+                        ObjectMapper TemplateMapper = new ObjectMapper();
+                        GsonBuilder builder = new GsonBuilder();
+                        builder.serializeNulls();
+                        Gson gson = builder.setPrettyPrinting().create();
+                        String jsonMap_template = new String(Files.readAllBytes(Paths.get(Template_path)));
+                        JSONParser parser1 = new JSONParser(jsonMap_template);
+                        Object template = parser1.parse();
+                        String templateInString = gson.toJson(template);
+                        JSONObject templateObject = new JSONObject(templateInString);
+                        JSONObject template_body = (JSONObject) templateObject.get("body");
+                        ParentNode = (String) templateObject.get("parentNode");
+                        Map<String, List<Map<String, Object>>> object = queryStatement(query, endPoint);
+                        Collection<List<Map<String, Object>>> objectList = object.values();
+                        for (List<Map<String, Object>> datas : objectList) {
+                            for (Map<String, Object> data : datas) {
+                                rowCountflag = rowCountflag + 1;
+                                String res = templateParser.parse("template", template_body.toString(), data);
+                                JSONParser parser = new JSONParser(res);
+                                Object json = parser.parse();
+                                response.add(json);
 
-        InputStream inputStream = new FileInputStream(new File(EndpointsAndQueriesWithTemplateFilePath));
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Map<String, String>> jsonMap = mapper.readValue(inputStream, Map.class);
-        System.out.println(jsonMap);
-        Set<String> keyss = jsonMap.keySet();
-        List<Object> response = new ArrayList<>();
-        Map<String,Object>Response=new HashMap<>();
-        int flag = 0;
-        for (String key : keyss) {
-            if (key.equals(endPoint)) {
-                Map<String, String> value = jsonMap.get(key);
-                String query = value.get("Query");
-                String Template_flag = value.get("templateFile");
-                String Template_path = value.get("jsonResponseTemplate_filePath");
-                String ParentNode;
-                if (Template_flag.equals("Y")) {
-                    ObjectMapper TemplateMapper = new ObjectMapper();
-                    GsonBuilder builder = new GsonBuilder();
-                    builder.serializeNulls();
-                    Gson gson = builder.setPrettyPrinting().create();
-                    String jsonMap_template = new String(Files.readAllBytes(Paths.get(Template_path)));
-                    JSONParser parser1 = new JSONParser(jsonMap_template);
-                    Object template = parser1.parse();
-                    String jsonInString = gson.toJson(template);
-                    JSONObject templateObject = new JSONObject(jsonInString);
-                    System.out.println("templateObject" + templateObject);
-                    JSONObject template_body = (JSONObject) templateObject.get("body");
-                    ParentNode= (String) templateObject.get("parentNode");
-                    Map<String, List<Map<String, Object>>> object = queryStatement(query, endPoint);
-                    Collection<List<Map<String, Object>>> objectList = object.values();
-                    for (List<Map<String, Object>> datas : objectList) {
-                        System.out.println("datas" + datas);
-                        for (Map<String, Object> data : datas) {
-                            flag = flag + 1;
-                            String res = templateParser.parse("template", template_body.toString(), data);
-                            JSONParser parser = new JSONParser(res);
-                            Object json = parser.parse();
-                            response.add(json);
-
+                            }
                         }
-                    }
-                    Response.put("Total_entries",flag);
-                    Response.put(ParentNode,response);
-                    return Response;
+                        Response.put("Total_entries", rowCountflag);
+                        Response.put(ParentNode, response);
+                        return new ResponseEntity<>(Response,HttpStatus.ACCEPTED) ;
 
-          }
-                else {
-                    Map<String, List<Map<String, Object>>> object = queryStatement(query, endPoint);
-                    Collection<List<Map<String, Object>>> objectList = object.values();
-                    //return Collections.singletonList(objectList);
-                    for (List<Map<String, Object>> datas : objectList) {
-                        System.out.println("datas" + datas);
-                        for (Map<String, Object> data : datas) {
-                            flag = flag + 1;
-                            response.add(data);
+                    } else {
+                        Map<String, List<Map<String, Object>>> object = queryStatement(query, endPoint);
+                        Collection<List<Map<String, Object>>> objectList = object.values();
+                        for (List<Map<String, Object>> datas : objectList) {
+                            for (Map<String, Object> data : datas) {
+                                rowCountflag = rowCountflag + 1;
+                                response.add(data);
+                            }
                         }
+                        Response.put("Total_entries", rowCountflag);
+                        Response.put(endPoint, response);
+                        return new ResponseEntity<>(Response,HttpStatus.ACCEPTED) ;
                     }
-                    Response.put("Total_entries",flag);
-                    Response.put(endPoint,response);
-                    return Response;                }
-                // return response;
+                }
+               else {return new ResponseEntity<>("Invalid URL", HttpStatus.BAD_REQUEST);
+                }
             }
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
 }

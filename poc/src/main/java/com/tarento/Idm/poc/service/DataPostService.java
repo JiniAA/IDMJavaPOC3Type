@@ -20,10 +20,11 @@ public class DataPostService {
 
     public void postDataToDB(String tableName, List<String> columnNames, List<List<Object>> data) throws SQLException {
 
-        Connection connection =dBconnection.readConnectionDetails(filePath3);
+        Connection connection = dBconnection.readConnectionDetails(filePath3);
         tableInsertQueryExecuter(columnNames, data, connection, tableName);
 
     }
+
     public void tableInsertQueryExecuter(List<String> columnNames, List<List<Object>> data, Connection connection, String tableName) throws SQLException {
         try {
             String insertColumns = "";
@@ -46,7 +47,10 @@ public class DataPostService {
             for (List<Object> o : data) {
                 int i = 1;
                 for (Object p : o) {
-                    ps.setString(i, (String) p);
+                    if (p != null)
+                        ps.setString(i, p.toString());
+                    else
+                        ps.setString(i, "");
                     i++;
                 }
                 int count = ps.executeUpdate();

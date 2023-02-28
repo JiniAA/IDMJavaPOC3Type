@@ -1,63 +1,72 @@
 package com.tarento.Idm.poc.service;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarento.Idm.poc.connection.DBconnection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 
 @Service
 public class DataPushService {
-
+    @Autowired
     DBconnection dBconnection;
-
+    @Autowired
     DataPostService dataPostService;
 
-    final static String filePath1
-            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\DbConnectionDetails.txt";
-    final static String filePath2
-            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\DbConnectionDetails2.txt";
+    final static String DatabaseAconnectionDetails
+            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\DbConnectionDetailsForDatabaseA.txt";
+    final static String DatabaseBonnectionDetails
+            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\DbConnectionDetailsforDatabaseB.txt";
 
-    final static String queryfile
-            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\EndPointsAndQueries.json";
+    final static String TablesWithqueriesfile
+            = "C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\TableNamesandQueries.json";
 
-    public void dataTransferAToB() {
+    public ResponseEntity<?> dataTransferAToB() {
         try {
-            Connection connectionA = dBconnection.readConnectionDetails(filePath1);
-            Connection connectionB = dBconnection.readConnectionDetails(filePath2);
+            Connection connectionA = dBconnection.readConnectionDetails(DatabaseAconnectionDetails);
+            Connection connectionB = dBconnection.readConnectionDetails(DatabaseBonnectionDetails);
             Statement statementA = connectionA.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
             Statement statementB = connectionB.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            for (String tableName : dataBaseTableName()) {
+            Map<String, Map<String, String>> endpointQuerymap = readTablenameQuery();
+            Set<String> tables = endpointQuerymap.keySet();
+            for (String tableName : tables) {
                 Boolean deleteExist = statementB.execute("DELETE FROM " + tableName);
-                ResultSet resultSet = statementA.executeQuery("SELECT * FROM " + tableName);
-
+                ResultSet resultSet = statementA.executeQuery(endpointQuerymap.get(tableName).get("Query"));
                 List<String> columnNames = buildTableModel(resultSet);
                 List<List<Object>> data = buildTableData(resultSet);
                 dataPostService.tableInsertQueryExecuter(columnNames, data, connectionB, tableName);
             }
+            return new ResponseEntity<>("Success", HttpStatus.ACCEPTED);
         } catch (SQLException e) {
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
-        }
-
-    }
-    public Set<String> dataBaseTableName() {
-        try {
-            InputStream inputStream = new FileInputStream(new File(queryfile));
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, Map<String, String>> jsonMap = mapper.readValue(inputStream, Map.class);
-            Set<String> tableNames = jsonMap.keySet();
-
-            return tableNames;
+        } catch (StreamReadException e) {
+            throw new RuntimeException(e);
+        } catch (DatabindException e) {
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
+
+    public Map<String, Map<String, String>> readTablenameQuery() throws IOException {
+        InputStream inputStream = new FileInputStream(new File(TablesWithqueriesfile));
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Map<String, String>> jsonMap = mapper.readValue(inputStream, Map.class);
+        Set<String> tableNames = jsonMap.keySet();
+        return jsonMap;
+    }
+
     public static List<String> buildTableModel(ResultSet rs) throws SQLException {
         try {
             ResultSetMetaData metaData = rs.getMetaData();

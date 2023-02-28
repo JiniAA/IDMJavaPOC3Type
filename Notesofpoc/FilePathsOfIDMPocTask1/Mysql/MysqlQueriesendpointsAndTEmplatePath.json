@@ -2,8 +2,8 @@
    "emp": {
        "Query": "select * from emp",
        "templateFile":"Y",
-          "jsonResponseTemplate_filePath":""
-   },
+       "jsonResponseTemplate_filePath":"C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\ResponseTemplateEmp.txt"
+      },
    "address" : {
              "Query" : "select * from address",
              "templateFile":"N",
