@@ -5,5 +5,4 @@
    "mxp_provstatus" : {
              "Query" : "select * from mxp_provstatus"
    }
-
 }

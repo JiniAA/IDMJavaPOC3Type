@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -45,7 +47,10 @@ public class DataController {
                  return dataGetService.readQueryEndPoint(endPoint);
              }
              else {
-                 return new ResponseEntity<>("Unathorized User\n Check your credentilas again",HttpStatus.UNAUTHORIZED);
+                 Map<String,String> errorMap=new HashMap<>();
+                 errorMap.put("ErrorCode",HttpStatus.UNAUTHORIZED.toString());
+                 errorMap.put("message","UNAUTHORIZED");
+                 return new ResponseEntity<>(errorMap,HttpStatus.UNAUTHORIZED);
 
              }
     }

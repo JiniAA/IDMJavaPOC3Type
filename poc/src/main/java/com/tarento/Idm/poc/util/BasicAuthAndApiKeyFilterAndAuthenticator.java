@@ -35,17 +35,21 @@ public class BasicAuthAndApiKeyFilterAndAuthenticator {
 
     public Boolean DoFilter(HttpServletRequest request) {
         try {
-            Map<String, String> keys = setCredentials();
-            String apiKeyHeader = request.getHeader(keys.get("ApiKey"));
+            Map<String, String> authData = setCredentials();
+            String apikey=authData.get("ApiKey");
+            //String apikeyFromHeader=request.get
+            System.out.println(apikey);
+            String apiKeyHeader = request.getHeader(apikey);
             String basicAuthHeader = request.getHeader("Authorization");
-            if ((basicAuthHeader == null) && (apiKeyHeader == null || !apiKeyHeader.equals(keys.get("KeyValue")))) {
+            if ((basicAuthHeader == null) && (apiKeyHeader == null || !apiKeyHeader.equals(authData.get("KeyValue")))) {
                 return false;
             } else {
                 if (basicAuthHeader != null) {//means user using basic auth
-                    return BasicAuthFilter(basicAuthHeader, keys);
+                    return BasicAuthFilter(basicAuthHeader, authData);
                 } else {
                     //user using api key
-                    return apiKeyHeader.equals(keys.get("KeyValue"));
+                    System.out.println(apiKeyHeader.equals(authData.get("KeyValue")));
+                    return apiKeyHeader.equals(authData.get("KeyValue"));
                 }
             }
         } catch (IOException e) {

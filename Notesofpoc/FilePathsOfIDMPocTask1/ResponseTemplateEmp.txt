@@ -1,9 +1,9 @@
 {
-	"parentNode"	: "Employee",
-	"body"		: 	{
-						"Employee_ID" 		: "${empid}",
-						"LstName"			: "${LastName}",
-                                    "FirstName"             : "${FirstName}"
+	"parentNode": "Employees",
+	"body": 	{
+						"Employee_ID" : "${empid}",
+						"LstName"     : "${LastName}",
+                                    "FirstName"   : "${FirstName}"
 			
 					}
 					

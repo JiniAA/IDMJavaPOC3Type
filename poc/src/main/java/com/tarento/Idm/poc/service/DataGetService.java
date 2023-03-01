@@ -137,10 +137,15 @@ public class DataGetService {
                         return new ResponseEntity<>(Response,HttpStatus.ACCEPTED) ;
                     }
                 }
-               else {return new ResponseEntity<>("Invalid URL", HttpStatus.BAD_REQUEST);
-                }
             }
-            return null;
+
+                   Map<String,String> errorMap=new HashMap<>();
+                   errorMap.put("ErrorCode",HttpStatus.BAD_REQUEST.toString());
+                   errorMap.put("Message","Invalid URL");
+                   return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+
+
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ParseException e) {

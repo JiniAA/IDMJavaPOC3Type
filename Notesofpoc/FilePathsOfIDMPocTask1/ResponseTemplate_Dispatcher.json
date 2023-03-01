@@ -1,8 +1,9 @@
 {
-	"parentNode"	: "dispatchersList",
+	"parentNode"	: "dispatcher",
 	"body"		: 	{
 						"disp_id" 			: "${DispatcherID}",
 						"disp_name"			: "${Machine}",
+
 						"status"              : {
 
 							"last_checked_at"	: "${LAST_VISITED}",
@@ -10,8 +11,7 @@
 							"status_info"		: "${STATUS_INFO}"	
 
 						}
-			
-						
 					}
+		
 					
 }

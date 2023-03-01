@@ -44,9 +44,12 @@ public class DataPushService {
                 List<List<Object>> data = buildTableData(resultSet);
                 dataPostService.tableInsertQueryExecuter(columnNames, data, connectionB, tableName);
             }
-            return new ResponseEntity<>("Success", HttpStatus.ACCEPTED);
+            Map<String,String> statusMap=new HashMap<>();
+            statusMap.put("StatusCode",HttpStatus.OK.toString());
+            statusMap.put("Message","Success");
+            return new ResponseEntity<>(statusMap, HttpStatus.OK);
         } catch (SQLException e) {
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e, HttpStatus.METHOD_NOT_ALLOWED);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (StreamReadException e) {
