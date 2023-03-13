@@ -9,6 +9,8 @@ import com.tarento.Idm.poc.util.BasicAuthAndApiKeyFilterAndAuthenticator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.json.ParseException;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class DataController {
+    private static final Logger logger = LoggerFactory.getLogger(DataController.class);
+
 
 
     @Autowired
@@ -44,9 +48,12 @@ public class DataController {
    @GetMapping("/{endPoint}")
     public ResponseEntity dynamicQueryExecuter(@PathVariable("endPoint") String endPoint, HttpServletRequest request) throws JSONException, IOException, SQLException, ParseException {
              if(Authfilter.DoFilter(request)) {
+                 logger.info("Authentication successful");
                  return dataGetService.readQueryEndPoint(endPoint);
              }
              else {
+                 logger.info("Unauthorized user login");
+                 logger.error("Unauthorized Error");
                  Map<String,String> errorMap=new HashMap<>();
                  errorMap.put("ErrorCode",HttpStatus.UNAUTHORIZED.toString());
                  errorMap.put("message","UNAUTHORIZED");

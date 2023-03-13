@@ -1,9 +1,10 @@
 {
- "host":"localhost",
- "port":"3306",
- "database":"mysql",
- "schema":"employee",
- "userid":"root",
- "password":"Jiniaa@1996",
- "Driver":"com.mysql.cj.jdbc.Driver"    
+ "host":"164.68.114.67",
+ "port":"1433",
+ "database":"sqlserver",
+ "instancename":"sqlexpress",
+ "schema":"MXMC_DB",
+ "userid":"MXMC_oper",
+ "password":"IdM_2019",
+ "Driver":"com.microsoft.sqlserver.jdbc.SQLServerDriver"    
 }

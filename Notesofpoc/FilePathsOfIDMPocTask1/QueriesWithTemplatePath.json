@@ -1,29 +1,13 @@
 {
-   "emp": {
-       "Query": "select * from emp",
-       "templateFile":"Y",
-       "jsonResponseTemplate_filePath":"C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\ResponseTemplateEmp.txt"
-      },
-   "address" : {
-             "Query" : "select * from address",
-             "templateFile":"N",
-          "jsonResponseTemplate_filePath":""
+   "Dispatchers":{
+            "Query":"select DispatcherID,Machine,LAST_VISITED,STOP_DISPATCHER,STATUS_INFO from MC_DISPATCHER",
+            "templateFile":"Y",
+            "jsonResponseTemplate_filePath":"C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\ResponseTemplate_Dispatcher.json"
    },
-   "department" : {
-             "Query" : "select * from department",
-             "templateFile":"N",
-          "jsonResponseTemplate_filePath":""
-   },
-   "project" : {
-             "Query" : "select * from project",
-             "templateFile":"N",
-          "jsonResponseTemplate_filePath":""
-   },
-   "jobdetails" : {
-             "Query" : "select * from jobdetails",
-             "templateFile":"N",
-          "jsonResponseTemplate_filePath":""
+  "provStatus":{
+            "Query":"select * from mxp_provstatus",
+            "templateFile":"N",
+            "jsonResponseTemplate_filePath":""
+ 
    }
- 
  }
- 

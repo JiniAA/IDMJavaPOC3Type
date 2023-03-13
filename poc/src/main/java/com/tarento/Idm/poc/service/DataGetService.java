@@ -6,12 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.tarento.Idm.poc.PocApplication;
 import com.tarento.Idm.poc.connection.DBconnection;
 import com.tarento.Idm.poc.util.TemplateParser;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +33,7 @@ import java.util.*;
 
 @Service
 public class DataGetService {
-
+    private static final Logger logger = LoggerFactory.getLogger(DataGetService.class);
     @Autowired
     DBconnection dBconnection;
     @Autowired
@@ -44,6 +47,7 @@ public class DataGetService {
 
     public Map<String, List<Map<String, Object>>> queryStatement(String sql, String endPoint) {
         try {
+            logger.info("Entered into queryStatement() method");
             Connection connection = dBconnection.readConnectionDetails(DatabaseConnectionFilePath);
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
@@ -72,12 +76,14 @@ public class DataGetService {
             table.put(endPoint, rows);
             return table;
         } catch (SQLException e) {
+            logger.error(String.valueOf(e));
             throw new RuntimeException(e);
         }
     }
 
-    public ResponseEntity<?> readQueryEndPoint(String endPoint){
+    public ResponseEntity<?> readQueryEndPoint(String endPoint) {
         try {
+            logger.info("Entered into readQueryEndPoint() Method");
             InputStream inputStream = new FileInputStream(new File(EndpointsAndQueriesWithTemplateFilePath));
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Map<String, String>> jsonMap = mapper.readValue(inputStream, Map.class);
@@ -86,7 +92,7 @@ public class DataGetService {
             List<Object> response = new ArrayList<>();
             Map<String, Object> Response = new HashMap<>();
             Map<String, Object> Error = new HashMap<>();
-            Error.put("Error","Invalid End Point");
+            Error.put("Error", "Invalid End Point");
             int rowCountflag = 0;
             for (String key : keyss) {
                 if (key.equals(endPoint)) {
@@ -96,6 +102,7 @@ public class DataGetService {
                     String Template_path = value.get("jsonResponseTemplate_filePath");
                     String ParentNode;
                     if (Template_flag.equals("Y")) {
+                        logger.info("user Wanted Template for :" + endPoint);
                         ObjectMapper TemplateMapper = new ObjectMapper();
                         GsonBuilder builder = new GsonBuilder();
                         builder.serializeNulls();
@@ -121,9 +128,11 @@ public class DataGetService {
                         }
                         Response.put("Total_entries", rowCountflag);
                         Response.put(ParentNode, response);
-                        return new ResponseEntity<>(Response,HttpStatus.ACCEPTED) ;
+                        logger.info("Status of API request:" + HttpStatus.ACCEPTED);
+                        return new ResponseEntity<>(Response, HttpStatus.ACCEPTED);
 
                     } else {
+                        logger.info("User Doesn't require any template for the Response");
                         Map<String, List<Map<String, Object>>> object = queryStatement(query, endPoint);
                         Collection<List<Map<String, Object>>> objectList = object.values();
                         for (List<Map<String, Object>> datas : objectList) {
@@ -134,16 +143,15 @@ public class DataGetService {
                         }
                         Response.put("Total_entries", rowCountflag);
                         Response.put(endPoint, response);
-                        return new ResponseEntity<>(Response,HttpStatus.ACCEPTED) ;
+                        return new ResponseEntity<>(Response, HttpStatus.ACCEPTED);
                     }
                 }
             }
 
-                   Map<String,String> errorMap=new HashMap<>();
-                   errorMap.put("ErrorCode",HttpStatus.BAD_REQUEST.toString());
-                   errorMap.put("Message","Invalid URL");
-                   return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
-
+            Map<String, String> errorMap = new HashMap<>();
+            errorMap.put("ErrorCode", HttpStatus.BAD_REQUEST.toString());
+            errorMap.put("Message", "Invalid URL");
+            return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
 
 
         } catch (IOException e) {
