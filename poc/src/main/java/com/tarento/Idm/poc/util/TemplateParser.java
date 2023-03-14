@@ -15,6 +15,7 @@ public class TemplateParser {
 
     public String parse(String templateName, String fillerObject, Object object) {
         //templateName, templateStructure,each table rows
+        System.out.println("Object"+ object);
         StringTemplateLoader stringLoader = new StringTemplateLoader();
         try {
             stringLoader.putTemplate( templateName,fillerObject);

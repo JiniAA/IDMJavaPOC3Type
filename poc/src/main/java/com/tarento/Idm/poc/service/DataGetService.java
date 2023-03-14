@@ -81,7 +81,7 @@ public class DataGetService {
         }
     }
 
-    public ResponseEntity<?> readQueryEndPoint(String endPoint) {
+    public ResponseEntity<?> readQueryEndPoint(String endPoint,Map<String,Object> Params) {
         try {
             logger.info("Entered into readQueryEndPoint() Method");
             InputStream inputStream = new FileInputStream(new File(EndpointsAndQueriesWithTemplateFilePath));
@@ -100,7 +100,28 @@ public class DataGetService {
                     String query = value.get("Query");
                     String Template_flag = value.get("templateFile");
                     String Template_path = value.get("jsonResponseTemplate_filePath");
+                    String Accept_Parameters = value.get("Accept_Parameters");
                     String ParentNode;
+                    if (Accept_Parameters.equals("Y")) {
+                        Object Request_Prameters = value.get("Request_Prameters");
+
+                        if(Params!=null && !Params.isEmpty()) {
+                            System.out.println("Parameters"+Params);
+                            String queryWithparams = templateParser.parse("template", query, Params);
+                            System.out.println(queryWithparams);
+                            query=queryWithparams;
+
+                        }else {
+                            // Req_param.put("param", Request_Prameters);
+                            Map<String, String> Req_param = (Map<String, String>) Request_Prameters;
+                            System.out.println(Request_Prameters);
+                            String queryWithparams = templateParser.parse("template", query, Req_param);
+                            System.out.println(queryWithparams);
+                            query=queryWithparams;
+
+                        }
+
+                    }
                     if (Template_flag.equals("Y")) {
                         logger.info("user Wanted Template for :" + endPoint);
                         ObjectMapper TemplateMapper = new ObjectMapper();
@@ -162,4 +183,5 @@ public class DataGetService {
             throw new RuntimeException(e);
         }
     }
+
 }

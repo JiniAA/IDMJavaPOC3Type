@@ -46,10 +46,13 @@ public class DataController {
 
 
    @GetMapping("/{endPoint}")
-    public ResponseEntity dynamicQueryExecuter(@PathVariable("endPoint") String endPoint, HttpServletRequest request) throws JSONException, IOException, SQLException, ParseException {
+    public ResponseEntity dynamicQueryExecuter(@PathVariable("endPoint") String endPoint,@RequestParam(required = false)Map<String,Object> Params, HttpServletRequest request) throws JSONException, IOException, SQLException, ParseException {
              if(Authfilter.DoFilter(request)) {
                  logger.info("Authentication successful");
-                 return dataGetService.readQueryEndPoint(endPoint);
+                 if(Params!=null)
+                 return dataGetService.readQueryEndPoint(endPoint,Params);
+                 else
+                     return dataGetService.readQueryEndPoint(endPoint,null);
              }
              else {
                  logger.info("Unauthorized user login");
@@ -61,6 +64,7 @@ public class DataController {
 
              }
     }
+
 
     @PostMapping("/postData/{tableName}")
     public void postDataToDB(@PathVariable("tableName") String tableName,

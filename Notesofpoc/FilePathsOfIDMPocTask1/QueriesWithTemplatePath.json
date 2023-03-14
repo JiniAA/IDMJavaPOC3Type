@@ -1,13 +1,21 @@
 {
    "Dispatchers":{
+           "Accept_Parameters":"N",
             "Query":"select DispatcherID,Machine,LAST_VISITED,STOP_DISPATCHER,STATUS_INFO from MC_DISPATCHER",
-            "templateFile":"Y",
+            "templateFile":"N",
             "jsonResponseTemplate_filePath":"C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\ResponseTemplate_Dispatcher.json"
    },
   "provStatus":{
+            "Accept_Parameters":"N",
             "Query":"select * from mxp_provstatus",
             "templateFile":"N",
             "jsonResponseTemplate_filePath":""
  
+   },
+   "DispatcherLog":{
+               "Accept_Parameters":"Y",
+               "Query":"select * from MC_DISPATCHER where DispatcherID= ${dispid}",
+               "templateFile":"N",
+               "jsonResponseTemplate_filePath":""
    }
  }
