@@ -1,12 +1,8 @@
 package com.tarento.Idm.poc.service;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.tarento.Idm.poc.PocApplication;
 import com.tarento.Idm.poc.connection.DBconnection;
 import com.tarento.Idm.poc.util.TemplateParser;
 import org.apache.tomcat.util.json.JSONParser;
@@ -24,8 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.*;
 
@@ -128,10 +122,11 @@ public class DataGetService {
                         GsonBuilder builder = new GsonBuilder();
                         builder.serializeNulls();
                         Gson gson = builder.setPrettyPrinting().create();
-                        String jsonMap_template = new String(Files.readAllBytes(Paths.get(Template_path)));
-                        JSONParser parser1 = new JSONParser(jsonMap_template);
-                        Object template = parser1.parse();
-                        String templateInString = gson.toJson(template);
+                       // String jsonMap_template = new String(Files.readAllBytes(Paths.get(Template_path)));
+                        Object jsonMap_template= value.get("jsonTemplates");
+//                        JSONParser parser1 = new JSONParser(jsonMap_template);
+//                        Object template = parser1.parse();
+                        String templateInString = gson.toJson(jsonMap_template);
                         JSONObject templateObject = new JSONObject(templateInString);
                         JSONObject template_body = (JSONObject) templateObject.get("body");
                         ParentNode = (String) templateObject.get("parentNode");

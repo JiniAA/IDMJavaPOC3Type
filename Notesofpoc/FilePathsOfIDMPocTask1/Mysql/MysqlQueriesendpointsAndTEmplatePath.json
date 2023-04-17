@@ -1,25 +1,40 @@
 {
    "emp": {
+      "Accept_Parameters":"N",
        "Query": "select * from emp",
        "templateFile":"Y",
-       "jsonResponseTemplate_filePath":"C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\ResponseTemplateEmp.txt"
+       "jsonResponseTemplate_filePath":"C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\ResponseTemplateEmp.txt",
+       "jsonTemplates":{
+       "parentNode": "Employees",
+	                   "body": 	{
+						"Employee_ID" : "${empid}",
+						"LastName"     : "${LastName}",
+                                    "FirstName"   : "${FirstName}"
+			
+					}
+       }
+
       },
    "address" : {
+            "Accept_Parameters":"N",
              "Query" : "select * from address",
              "templateFile":"N",
           "jsonResponseTemplate_filePath":""
    },
    "department" : {
+      "Accept_Parameters":"N",
              "Query" : "select * from department",
              "templateFile":"N",
           "jsonResponseTemplate_filePath":""
    },
    "project" : {
+      "Accept_Parameters":"N",
              "Query" : "select * from project",
              "templateFile":"N",
           "jsonResponseTemplate_filePath":""
    },
    "jobdetails" : {
+      "Accept_Parameters":"N",
              "Query" : "select * from jobdetails",
              "templateFile":"N",
           "jsonResponseTemplate_filePath":""

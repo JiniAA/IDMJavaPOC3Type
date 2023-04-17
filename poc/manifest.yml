@@ -1,0 +1,11 @@
+applications:
+  - name: smartapiapp
+    path: ./target/poc-0.0.1-SNAPSHOT.jar
+    buildpack: java_buildpack
+    random-route: true
+    # routes:
+    #- route: smartapiapp-kangaroo-mn.cfapps.us10-001.hana.ondemand.com
+    env:
+      TARGET_RUNTIME: tomcat
+      JBP_CONFIG_COMPONENTS: "jres: ['com.sap.xs.java.buildpack.jdk.SAPMachineJDK']"
+      # services:

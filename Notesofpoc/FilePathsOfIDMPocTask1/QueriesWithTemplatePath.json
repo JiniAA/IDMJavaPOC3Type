@@ -2,20 +2,34 @@
    "Dispatchers":{
            "Accept_Parameters":"N",
             "Query":"select DispatcherID,Machine,LAST_VISITED,STOP_DISPATCHER,STATUS_INFO from MC_DISPATCHER",
-            "templateFile":"N",
-            "jsonResponseTemplate_filePath":"C:\\JiniAA\\IDM\\POCs\\Notesofpoc\\FilePathsOfIDMPocTask1\\ResponseTemplate_Dispatcher.json"
-   },
-  "provStatus":{
-            "Accept_Parameters":"N",
-            "Query":"select * from mxp_provstatus",
-            "templateFile":"N",
-            "jsonResponseTemplate_filePath":""
- 
-   },
-   "DispatcherLog":{
+            "templateFile":"Y",
+            "jsonTemplates":{
+              "parentNode"	: "dispatcher",
+              "body"		: 	{
+                        "disp_id" 			: "${DispatcherID}",
+                        "disp_name"			: "${Machine}",
+            
+                        "status"              : {
+            
+                          "last_checked_at"	: "${LAST_VISITED}",
+                          "stop_disp"			: "${STOP_DISPATCHER}",
+                          "status_info"		: "${STATUS_INFO}"	
+            
+                        }
+                      }           
+            }
+   }, 
+   "provStatus":{
+      "Accept_Parameters":"N",
+      "Query":"select * from mxp_provstatus",
+      "templateFile":"N",
+      "jsonResponseTemplate_filePath":""
+
+},
+   "mc_jobs":{
                "Accept_Parameters":"Y",
-               "Query":"select * from MC_DISPATCHER where DispatcherID= ${dispid}",
-               "templateFile":"N",
-               "jsonResponseTemplate_filePath":""
+               "Query":"select * from mc_jobs where JobGuid= '${JobGuid}'",
+               "templateFile":"N"
    }
  }
+ 

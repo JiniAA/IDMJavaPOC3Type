@@ -1,12 +1,10 @@
 package com.tarento.Idm.poc.util;
 
-import com.tarento.Idm.poc.PocApplication;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
