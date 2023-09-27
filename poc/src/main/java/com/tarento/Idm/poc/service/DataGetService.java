@@ -75,7 +75,7 @@ public class DataGetService {
         }
     }
 
-    public ResponseEntity<?> readQueryEndPoint(String endPoint,Map<String,Object> Params) {
+    public ResponseEntity<?> readQueryEndPoint(String endPoint, Map<String, Object> Params) {
         try {
             logger.info("Entered into readQueryEndPoint() Method");
             InputStream inputStream = new FileInputStream(new File(EndpointsAndQueriesWithTemplateFilePath));
@@ -99,19 +99,20 @@ public class DataGetService {
                     if (Accept_Parameters.equals("Y")) {
                         Object Request_Prameters = value.get("Request_Prameters");
 
-                        if(Params!=null && !Params.isEmpty()) {
-                            System.out.println("Parameters"+Params);
+                        if (Params != null && !Params.isEmpty()) {
+                            System.out.println("Parameters" + Params);
                             String queryWithparams = templateParser.parse("template", query, Params);
                             System.out.println(queryWithparams);
-                            query=queryWithparams;
+                            query = queryWithparams;
 
-                        }else {
+                        } else {
                             // Req_param.put("param", Request_Prameters);
                             Map<String, String> Req_param = (Map<String, String>) Request_Prameters;
                             System.out.println(Request_Prameters);
                             String queryWithparams = templateParser.parse("template", query, Req_param);
                             System.out.println(queryWithparams);
-                            query=queryWithparams;
+                            query = queryWithparams;
+
 
                         }
 
@@ -122,8 +123,8 @@ public class DataGetService {
                         GsonBuilder builder = new GsonBuilder();
                         builder.serializeNulls();
                         Gson gson = builder.setPrettyPrinting().create();
-                       // String jsonMap_template = new String(Files.readAllBytes(Paths.get(Template_path)));
-                        Object jsonMap_template= value.get("jsonTemplates");
+                        // String jsonMap_template = new String(Files.readAllBytes(Paths.get(Template_path)));
+                        Object jsonMap_template = value.get("jsonTemplates");
 //                        JSONParser parser1 = new JSONParser(jsonMap_template);
 //                        Object template = parser1.parse();
                         String templateInString = gson.toJson(jsonMap_template);
@@ -178,5 +179,13 @@ public class DataGetService {
             throw new RuntimeException(e);
         }
     }
+
+    public Object readCopyTableDetails()
+    {
+
+
+        return null;
+    }
+
 
 }

@@ -77,4 +77,9 @@ public class DataController {
     public ResponseEntity<?> transferDataAtoB() throws SQLException, IOException {
       return dataPushService.dataTransferAToB();
     }
+    @PostMapping("/postData")
+    public ResponseEntity<?> PostDataFromAtoB throws SQLException, IOException {
+       // return dataPushService.dataTransferAToB();
+        return dataGetService.
+    }
 }

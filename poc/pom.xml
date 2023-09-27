@@ -10,6 +10,7 @@
     </parent>
     <groupId>com.tarento.Idm</groupId>
     <artifactId>poc</artifactId>
+    <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>poc</name>
     <description>Demo project for Spring Boot</description>
